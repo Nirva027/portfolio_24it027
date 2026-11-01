@@ -37,8 +37,8 @@ npm run build
 
 To run the P12 Docker stack as well, set a private `JWT_SECRET` of at least 32 characters and run `docker compose up --build` from the `p12` directory. It uses ports 5174 (frontend), 5002 (backend), and 27019 (MongoDB) so it can coexist with Practical 11.
 
-## Demonstrate a failed check, then a passing check
+## Failed and fixed pipeline demonstration
 
-The backend listener test includes a stable notification-message assertion. To demonstrate the red/green CI cycle safely, temporarily change the expected task title in `p12/backend/test/listeners.test.js` from `Async task` to a different title, commit and push that deliberately incorrect assertion to `main`, and open the **Practical 12 CI** run in the repository's Actions tab. The backend job must fail at the assertion. Restore the expected title to `Async task`, commit and push the correction, and verify that both jobs pass on the next run. Do not leave the intentionally broken assertion on `main`.
+The Practical 12 commit history demonstrates the red/green cycle: the initial CI commit deliberately expected the wrong task title in `p12/backend/test/listeners.test.js`, which causes the backend test job to fail. The following correction restores the expected title, after which the backend tests and frontend build pass. Both runs are available under **Actions → Practical 12 CI** in the GitHub repository. The test on `main` is now corrected.
 
-`npm test` can also be run in the backend folder while the assertion is deliberately incorrect to reproduce the failure locally before pushing. The other backend tests and the independent frontend build remain useful diagnostics for identifying which stage failed.
+To reproduce the failure locally, temporarily change the expected task title in `p12/backend/test/listeners.test.js` from `Async task` to a different title and run `npm test` from the backend folder. Restore the expected title before committing any further work. The intentionally incorrect assertion must not remain on `main`.

@@ -27,7 +27,7 @@ test('task-created listener returns before its delayed notification completes', 
   assert.deepEqual(messages, []);
 
   await notification;
-  assert.match(messages[0], /Task "Deliberately incorrect expectation" created at/);
+  assert.match(messages[0], /Task "Async task" created at/);
   assert.match(messages[0], /assigned user: student@example\.test/);
   assert.match(messages[0], /handler completed at/);
 });
