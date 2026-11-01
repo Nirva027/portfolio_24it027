@@ -1,0 +1,15 @@
+{
+  "name": "student-portfolio-practical-6-task-api",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "mongoose": "^8.24.7"
+  }
+}
