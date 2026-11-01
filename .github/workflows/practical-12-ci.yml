@@ -1,0 +1,58 @@
+name: Practical 12 CI
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-tests:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ ping: 1 }).ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install backend dependencies
+        working-directory: p12/backend
+        run: npm install
+      - name: Run backend tests
+        working-directory: p12/backend
+        env:
+          TEST_MONGO_URI: mongodb://127.0.0.1:27017/student_portfolio_p12_ci
+          JWT_SECRET: practical-12-ci-only-secret-longer-than-thirty-two-characters
+        run: npm test
+
+  frontend-build:
+    name: Frontend production build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install frontend dependencies
+        working-directory: p12/frontend
+        run: npm install
+      - name: Build frontend
+        working-directory: p12/frontend
+        run: npm run build
