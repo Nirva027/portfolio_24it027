@@ -1,0 +1,65 @@
+name: student-portfolio-practical11
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      PORT: "5000"
+      MONGO_URI: mongodb://mongodb:27017/student_portfolio_p11
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET to a private secret of at least 32 characters}
+    ports:
+      - "5001:5000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:5000/api/health').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 10s
+      timeout: 3s
+      start_period: 20s
+      retries: 5
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test:
+        - CMD
+        - mongosh
+        - --quiet
+        - --eval
+        - "db.adminCommand('ping').ok"
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 5
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
